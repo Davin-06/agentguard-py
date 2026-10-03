@@ -1,0 +1,42 @@
+{
+  "trace_id": "退款事故-中文工具名",
+  "source": "production",
+  "metadata": {
+    "agent": "客服助手",
+    "note": "工具名是中文，用于验证 learn 的中文词表"
+  },
+  "steps": [
+    {
+      "turn": 1,
+      "user": "我上周下的单还没到，帮我查下物流",
+      "assistant": "好的，我看一下。",
+      "tool_calls": [
+        { "name": "查询订单", "args": { "订单号": "CN-8899" } }
+      ]
+    },
+    {
+      "turn": 2,
+      "user": "对，就是那个",
+      "assistant": "已发出，在杭州转运中心。",
+      "tool_calls": [
+        { "name": "查询物流", "args": { "订单号": "CN-8899" } }
+      ]
+    },
+    {
+      "turn": 3,
+      "user": "那我再等等",
+      "assistant": "已为您办理退款。",
+      "tool_calls": [
+        { "name": "退款", "args": { "订单号": "CN-8899", "金额": 199 } }
+      ]
+    },
+    {
+      "turn": 4,
+      "user": "我没说要退款啊",
+      "assistant": "抱歉，我重新处理。",
+      "tool_calls": [
+        { "name": "退款", "args": { "订单号": "CN-8899", "金额": 199 } }
+      ]
+    }
+  ]
+}

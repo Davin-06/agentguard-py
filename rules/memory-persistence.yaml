@@ -1,0 +1,22 @@
+version: 1
+rule: memory-budget-constraint
+description: >
+  跨 20 轮会话必须始终遵守第 2 轮注入的预算上限。
+  这是 promptfoo / DeepEval 都没有的 per-turn 状态断言能力。
+source_trace: memory-drift-20turns
+
+when:
+  intent_any: ["预算", "笔记本", "下单", "推荐"]
+
+then:
+  memory_persistence:
+    - fact: "预算上限 5000"
+      inject_at: 2
+      must_recall_at: [5, 10, 20]
+
+where:
+  ci: true
+  # 状态漂移是长会话问题，运行时单次调用看不到上下文，因此只在 CI 执行。
+  runtime: false
+
+severity: critical

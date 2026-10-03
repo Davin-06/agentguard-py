@@ -1,0 +1,24 @@
+version: 1
+rule: refund-safety
+description: >
+  只读场景下不得调用破坏性工具。
+  这条规则同时用于 CI 门禁和线上护栏——where 决定谁执行。
+  注意：幂等约束**不在这里**，见 rules/payment-idempotency.yaml。
+  刻意**不写 allow_tool**：它是闭名单，只认名字写死的工具。
+  本项目里 refund_zh 用的是中文工具名，任何为它补的 allow_tool
+  都会反过来把英文 trace 判成违规——而那次违规的成因
+  （「名字不在名单里」）跟本规则想表达的意思（「只读场景别退款」）
+  完全不是一回事。想收紧就补 forbid_tool，别补 allow_tool。
+source_trace: refund-incident-abc123
+
+when:
+  intent_any: ["到货", "物流", "订单", "status", "track", "什么时候"]
+
+then:
+  forbid_tool: refund_order
+
+where:
+  ci: true
+  runtime: true
+
+severity: critical

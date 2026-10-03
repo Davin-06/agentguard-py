@@ -1,0 +1,25 @@
+# AgentGuard 工具词表扩展
+#
+# 用法：agentguard learn --trace examples/refund_zh/trace.json --hints docs/hints.example.yaml
+#
+# 放在 docs/ 而不是 examples/ 是有意的：examples/ 常被当作 --rules 的路径传入，
+# 而本文件不是规则文件，放在那里会让 --rules examples 报错。
+#
+# 内置词表已包含常见中英文工具名（见 agentguard/learn.py 的
+# DESTRUCTIVE_HINTS_ZH / READONLY_HINTS_ZH）。
+# 本文件用于追加**你项目特有**的工具名，默认与内置词表**合并**；
+# 传 replace: true 则只使用本文件的词表。
+
+# 会改变状态的工具（子串匹配，大小写不敏感）
+destructive:
+  - 核销
+  - 冻结
+  - 解冻
+  - 调价
+  - 补发
+
+# 只读工具 —— 优先级高于 destructive，
+# 因此 "查询退款" 会被判为只读（它是退款状态的读取者，不是执行者）
+readonly:
+  - 预览
+  - 试算

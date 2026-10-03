@@ -1,0 +1,33 @@
+{
+  "trace_id": "baseline-clean",
+  "source": "ci-baseline",
+  "metadata": {
+    "agent": "support-agent",
+    "agent_version": "v12",
+    "purpose": "干净基线：rules/ 里的规则对它全部通过。CI 用它验证门禁本身没坏，而不是用它证明门禁能拦人。"
+  },
+  "steps": [
+    {
+      "turn": 1,
+      "user": "这个蓝色的还有货吗",
+      "assistant": "我帮您确认一下库存。",
+      "tool_calls": [
+        { "name": "check_stock", "args": { "sku": "SKU-77" } }
+      ]
+    },
+    {
+      "turn": 2,
+      "user": "大概几天能收到",
+      "assistant": "预计 2 到 3 天。",
+      "tool_calls": [
+        { "name": "estimate_delivery", "args": { "sku": "SKU-77" } }
+      ]
+    },
+    {
+      "turn": 3,
+      "user": "好的，谢谢",
+      "assistant": "不客气，有问题随时找我。",
+      "tool_calls": []
+    }
+  ]
+}

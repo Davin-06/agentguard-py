@@ -1,0 +1,26 @@
+version: 1
+rule: payment-idempotency
+description: >
+  同一订单不得重复扣款或重复退款。这条规则只有幂等约束，没有 forbid，
+  因此可以完整演示运行时账本：第一次放行，第二次同键被拦。
+  刻意**不带 when**：重复扣款无论用户说了什么都是事故，
+  而 `when` 会把整条规则门控掉——包括幂等检查本身。
+  中英文工具名各列一条：幂等键要从 args 里取，工具名对不上就取不到键，
+  那台账本会安静地什么都不记——比误报更危险。
+source_trace: refund-incident-abc123
+
+then:
+  idempotent:
+    - tool: charge_card
+      key: "${order_id}"
+    - tool: refund_order
+      key: "${order_id}"
+    # 中文工具名（见 examples/refund_zh）用中文参数名取键。
+    - tool: 退款
+      key: "${订单号}"
+
+where:
+  ci: true
+  runtime: true
+
+severity: critical

@@ -1,0 +1,94 @@
+name: AgentGuard 回归门禁
+
+on:
+  pull_request:
+    paths:
+      - "rules/**"
+      - "traces/**"
+      - "**/*.py"
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  # ------------------------------------------------------------------ #
+  # 1. 自检：AgentGuard 自己的测试套件。
+  #    门禁工具本身坏了，比门禁漏报更危险 —— 它会安静地放行一切。
+  # ------------------------------------------------------------------ #
+  self-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装（含测试依赖）
+        run: pip install -e ".[dev]"
+
+      - name: 跑测试
+        run: pytest -q
+
+  # ------------------------------------------------------------------ #
+  # 2. 门禁：把 rules/ 应用到 traces/ 上。
+  #    traces/ 里放的是**干净基线**，所以这个 job 应当通过。
+  #    要复现"门禁真的能拦住人"，跑 examples/demo.py。
+  # ------------------------------------------------------------------ #
+  agentguard:
+    runs-on: ubuntu-latest
+    # upload-sarif 需要 security-events: write。注意：来自 fork 的 PR 拿不到这个权限，
+    # 那个步骤会失败 —— 所以下面的 if 里把它排除掉了。
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 安装 AgentGuard
+        run: pip install -e .
+
+      - name: 跑门禁（critical 违规即阻断合并）
+        run: |
+          agentguard gate \
+            --rules rules \
+            --traces traces \
+            --fail-on critical \
+            --out .agentguard-out
+
+      - name: 上传报告为 CI artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: agentguard-report
+          path: .agentguard-out/
+
+      - name: 上传 SARIF 到 GitHub Security 标签页
+        # 违规会以 code scanning 告警的形式出现在 Security 标签页和 PR 的
+        # "Files changed" 里。文件级定位（无行号），原因见 README「已知限制」。
+        if: always() && github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: .agentguard-out/agentguard-results.sarif
+          category: agentguard
+
+      - name: 把报告贴到 PR
+        if: always() && github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = '.agentguard-out/agentguard-report.md';
+            if (!fs.existsSync(path)) return;
+            const body = fs.readFileSync(path, 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });

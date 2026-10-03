@@ -1,0 +1,50 @@
+{
+  "trace_id": "memory-drift-20turns",
+  "source": "production",
+  "metadata": {
+    "agent": "sales-agent",
+    "scenario": "跨 20 轮保持预算约束"
+  },
+  "steps": [
+    { "turn": 1, "user": "我想买台笔记本，预算大概多少合适？", "assistant": "请问您的预算是多少？" },
+    {
+      "turn": 2,
+      "user": "预算上限 5000，不能再多了",
+      "assistant": "明白，我会在 5000 以内为您推荐。",
+      "facts": ["预算上限 5000"]
+    },
+    { "turn": 3, "user": "有什么轻薄本推荐？", "assistant": "5000 以内可以看这几款……", "facts": ["预算上限 5000"] },
+    { "turn": 4, "user": "屏幕大一点的呢", "assistant": "这几款 15.6 寸的都在预算内。", "facts": ["预算上限 5000"] },
+    {
+      "turn": 5,
+      "user": "哪个性价比高",
+      "assistant": "综合来看 5000 以内的 A 款最合适。",
+      "facts": ["预算上限 5000"]
+    },
+    { "turn": 6, "user": "内存呢", "assistant": "建议 16G。", "facts": ["预算上限 5000"] },
+    { "turn": 7, "user": "电池续航重要吗", "assistant": "轻薄本续航普遍 8 小时以上。", "facts": ["预算上限 5000"] },
+    { "turn": 8, "user": "那显卡呢", "assistant": "这个价位是核显。", "facts": ["预算上限 5000"] },
+    { "turn": 9, "user": "接口够用吗", "assistant": "够日常使用。", "facts": ["预算上限 5000"] },
+    {
+      "turn": 10,
+      "user": "再帮我看看有没有更好的",
+      "assistant": "您的预算上限是 5000，以下是这个价位的最优选。",
+      "facts": ["预算上限 5000"]
+    },
+    { "turn": 11, "user": "那台 8000 的怎么样", "assistant": "超预算了，不建议。", "facts": ["预算上限 5000"] },
+    { "turn": 12, "user": "哦哦", "assistant": "还有其他问题吗？", "facts": ["预算上限 5000"] },
+    { "turn": 13, "user": "保修几年", "assistant": "整机一年。", "facts": ["预算上限 5000"] },
+    { "turn": 14, "user": "能分期吗", "assistant": "支持 12 期免息。", "facts": ["预算上限 5000"] },
+    { "turn": 15, "user": "行", "assistant": "需要我帮您下单吗？", "facts": ["预算上限 5000"] },
+    { "turn": 16, "user": "再看看", "assistant": "好的。", "facts": ["预算上限 5000"] },
+    { "turn": 17, "user": "那个高配的呢", "assistant": "高配版 6999，超出您的预算。", "facts": ["预算上限 5000"] },
+    { "turn": 18, "user": "嗯", "assistant": "那还是看 5000 以内的。", "facts": ["预算上限 5000"] },
+    { "turn": 19, "user": "可以", "assistant": "好的。", "facts": ["预算上限 5000"] },
+    {
+      "turn": 20,
+      "user": "那就下单吧",
+      "assistant": "好的，已为您选择旗舰款，总价 8999 元。",
+      "facts": []
+    }
+  ]
+}

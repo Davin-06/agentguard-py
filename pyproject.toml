@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "agentguard"
+version = "0.1.0"
+description = "Agent 行为回归门禁：一份规则，两个执行出口（CI 门禁 + 运行时拦截）"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+authors = [{ name = "AgentGuard contributors" }]
+keywords = ["agent", "llm", "regression", "ci", "guardrails", "tool-calling"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Quality Assurance",
+]
+# PyYAML is the only runtime dependency.  Everything else is stdlib, on purpose:
+# a gate that needs a dependency tree will not get installed into CI.
+dependencies = ["pyyaml>=6.0"]
+
+[project.optional-dependencies]
+dev = ["pytest>=7.0"]
+
+[project.urls]
+Homepage = "https://github.com/Davin-06/agentguard"
+Issues = "https://github.com/Davin-06/agentguard/issues"
+Changelog = "https://github.com/Davin-06/agentguard/releases"
+
+[project.scripts]
+agentguard = "agentguard.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["agentguard*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
